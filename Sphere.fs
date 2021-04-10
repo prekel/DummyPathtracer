@@ -1,5 +1,6 @@
 namespace DummyPathtracer
 
+[<Struct>]
 type Sphere =
     { Center: Point3
       Radius: float32 }
