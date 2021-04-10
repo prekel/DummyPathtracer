@@ -5,15 +5,15 @@ open DummyPathtracer
 
 let hitSphere (Point3 center) radius r =
     let oc = Point3.value r.Origin - center
-    let a = Vector3.dot r.Direction r.Direction
-    let b = 2.f * Vector3.dot oc r.Direction
-    let c = (Vector3.dot oc oc) - radius * radius
-    let discriminant = b * b - 4.f * a * c
+    let a = r.Direction.LengthSquared()
+    let halfB = Vector3.dot oc r.Direction
+    let c = oc.LengthSquared() - radius * radius
+    let discriminant = halfB * halfB - a * c
 
     if discriminant < 0.f then
         -1.f
     else
-        (-b - sqrt discriminant) / (2.f * a)
+        (-halfB - sqrt discriminant) / a
 
 let rayColor r =
     let t =
