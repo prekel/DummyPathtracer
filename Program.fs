@@ -11,6 +11,8 @@ let main _ =
     fprintfn sw $"P3\n%d{imageWidth} %d{imageHeight}\n255"
 
     for j in [ imageHeight - 1 .. -1 .. 0 ] do
+        printfn $"Scanlines remaining: %d{j}"
+
         for i in [ 0 .. imageWidth - 1 ] do
             let r = double i / double (imageWidth - 1)
             let g = double j / double (imageHeight - 1)
@@ -21,5 +23,7 @@ let main _ =
             let ib = int (255.999 * b)
 
             fprintfn sw $"%d{ir} %d{ig} %d{ib}"
+
+    printfn "Done."
 
     0
