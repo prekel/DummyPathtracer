@@ -1,4 +1,6 @@
-﻿open System.IO
+﻿open DummyPathtracer
+
+open System.IO
 
 [<EntryPoint>]
 let main _ =
@@ -14,15 +16,10 @@ let main _ =
         printfn $"Scanlines remaining: %d{j}"
 
         for i in [ 0 .. imageWidth - 1 ] do
-            let r = double i / double (imageWidth - 1)
-            let g = double j / double (imageHeight - 1)
-            let b = 0.25
+            let pixelColor =
+                Color(float32 i / float32 (imageWidth - 1), float32 j / float32 (imageHeight - 1), 0.25f)
 
-            let ir = int (255.999 * r)
-            let ig = int (255.999 * g)
-            let ib = int (255.999 * b)
-
-            fprintfn sw $"%d{ir} %d{ig} %d{ib}"
+            Color.writeColor sw pixelColor
 
     printfn "Done."
 
