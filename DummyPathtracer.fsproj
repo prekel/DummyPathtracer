@@ -8,9 +8,12 @@
     <ItemGroup>
         <Compile Include="Utils.fs" />
         <Compile Include="Vector3.fs" />
+        <Compile Include="Color.fs" />
+        <Compile Include="Point3.fs" />
         <Compile Include="Ray.fs" />
         <Compile Include="HitRecord.fs" />
         <Compile Include="Hittable.fs" />
+        <Compile Include="Camera.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 

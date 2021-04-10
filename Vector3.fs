@@ -11,20 +11,3 @@ module Vector3 =
     let unitVector (v: Vector3) = v / v.Length()
 
     let dot (u: Vector3) (v: Vector3) = u.X * v.X + u.Y * v.Y + u.Z * v.Z
-
-[<Struct>]
-type Point3 = Point3 of Vector3
-
-module Point3 =
-    let value (Point3 point3) = point3
-
-[<Struct>]
-type Color = Color of Vector3
-
-module Color =
-    let value (Color color) = color
-
-    let writeColor sw (Color pixelColor) =
-        fprintfn
-            sw
-            $"%d{int (255.999f * pixelColor.X)} %d{int (255.999f * pixelColor.Y)} %d{int (255.999f * pixelColor.Z)}"

@@ -20,6 +20,7 @@ let main _ =
 
     let imageWidth = 400
     let imageHeight = int (float32 imageWidth / aspectRatio)
+    let samplesPerPixel = 100
 
     let world =
         Hittable.HittableList
@@ -31,21 +32,7 @@ let main _ =
                         { Center = Point3(Vector3(0f, -100.5f, -1f))
                           Radius = 100f } ] }
 
-
-    let viewportHeight = 2.f
-    let viewportWidth = aspectRatio * viewportHeight
-    let focalLength = 1.f
-
-    let origin = Point3(Vector3.Zero)
-    let (Point3 originV) = origin
-    let horizontal = Vector3(viewportWidth, 0.f, 0.f)
-    let vertical = Vector3(0.f, viewportHeight, 0.f)
-
-    let lowerLeftCorner =
-        originV
-        - horizontal / 2.f
-        - vertical / 2.f
-        - Vector3(0.f, 0.f, focalLength)
+    let camera = Camera.create ()
 
     use sw =
         new StreamWriter(Path.Combine(__SOURCE_DIRECTORY__, "image.ppm"))
@@ -56,18 +43,24 @@ let main _ =
         printfn $"Scanlines remaining: %d{j}"
 
         for i in [ 0 .. imageWidth - 1 ] do
-            let u = float32 i / float32 (imageWidth - 1)
-            let v = float32 j / float32 (imageHeight - 1)
+            let pixelColor =
+                [ 0 .. samplesPerPixel - 1 ]
+                |> List.map
+                    (fun _ ->
+                        let u =
+                            (float32 i + randomDouble ())
+                            / float32 (imageWidth - 1)
 
-            let r =
-                { Origin = origin
-                  Direction =
-                      lowerLeftCorner + u * horizontal + v * vertical
-                      - originV }
+                        let v =
+                            (float32 j + randomDouble ())
+                            / float32 (imageHeight - 1)
 
-            let pixelColor = rayColor r world
+                        let r = Camera.getRay u v camera
+                        rayColor r world |> Color.value)
+                |> List.sum
+                |> Color
 
-            Color.writeColor sw pixelColor
+            Color.writeColor sw pixelColor samplesPerPixel
 
     printfn "Done."
 
