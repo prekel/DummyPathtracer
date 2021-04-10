@@ -3,31 +3,10 @@ open System.IO
 
 open DummyPathtracer
 
-let hitSphere (Point3 center) radius r =
-    let oc = Point3.value r.Origin - center
-    let a = r.Direction.LengthSquared()
-    let halfB = Vector3.dot oc r.Direction
-    let c = oc.LengthSquared() - radius * radius
-    let discriminant = halfB * halfB - a * c
-
-    if discriminant < 0.f then
-        -1.f
-    else
-        (-halfB - sqrt discriminant) / a
-
-let rayColor r =
-    let t =
-        hitSphere (Point3(Vector3(0.f, 0.f, -1.f))) 0.5f r
-
-    if t > 0.f then
-        let N =
-            Point3.value (Ray.at r t)
-            - Vector3(0.f, 0.f, -1.f)
-            |> Vector3.unitVector
-
-        0.5f * Vector3(N.X + 1.f, N.Y + 1.f, N.Z + 1.f)
-        |> Color
-    else
+let rayColor r (world: IHittable) =
+    match world.Hit r 0.f infinityf with
+    | ValueSome rec' -> 0.5f * (rec'.Normal + Vector3.One) |> Color
+    | ValueNone ->
         let unitDirection = r.Direction |> Vector3.unitVector
         let t = 0.5f * (unitDirection.Y + 1.f)
 
@@ -41,6 +20,14 @@ let main _ =
 
     let imageWidth = 400
     let imageHeight = int (float32 imageWidth / aspectRatio)
+
+    let world =
+        { HittableList.Objects =
+              [ { Center = Point3(Vector3(0.f, 0.f, -1.f))
+                  Radius = 0.5f }
+                { Center = Point3(Vector3(0f, -100.5f, -1f))
+                  Radius = 100f } ] }
+
 
     let viewportHeight = 2.f
     let viewportWidth = aspectRatio * viewportHeight
@@ -75,7 +62,7 @@ let main _ =
                       lowerLeftCorner + u * horizontal + v * vertical
                       - originV }
 
-            let pixelColor = rayColor (r)
+            let pixelColor = rayColor r world
 
             Color.writeColor sw pixelColor
 
