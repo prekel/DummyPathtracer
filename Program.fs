@@ -1,15 +1,27 @@
-﻿open System.Numerics
-open DummyPathtracer
+﻿open DummyPathtracer
 
+open System.Numerics
 open System.IO
 
-let rayColor r =
-    let unitDirection = r.Direction |> Vector3.unitVector
-    let t = 0.5f * (unitDirection.Y + 1.f)
+let hitSphere (Point3 center) radius r =
+    let (Point3 origin) = r.Origin
+    let oc = origin - center
+    let a = Vector3.dot r.Direction r.Direction
+    let b = 2.f * Vector3.dot oc r.Direction
+    let c = (Vector3.dot oc oc) - radius * radius
+    let discriminant = b * b - 4.f * a * c
+    discriminant > 0.f
 
-    (1.f - t) * Vector3.One
-    + t * Vector3(0.5f, 0.7f, 1.f)
-    |> Color
+let rayColor r =
+    if hitSphere (Point3(Vector3(0.f, 0.f, -1.f))) 0.5f r then
+        Color(Vector3.UnitX)
+    else
+        let unitDirection = r.Direction |> Vector3.unitVector
+        let t = 0.5f * (unitDirection.Y + 1.f)
+
+        (1.f - t) * Vector3.One
+        + t * Vector3(0.5f, 0.7f, 1.f)
+        |> Color
 
 [<EntryPoint>]
 let main _ =

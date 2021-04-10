@@ -10,6 +10,8 @@ module Vector3 =
 
     let unitVector (v: Vector3) = v / v.Length()
 
+    let dot (u: Vector3) (v: Vector3) = u.X * v.X + u.Y * v.Y + u.Z * v.Z
+
 [<Struct>]
 type Point3 = Point3 of Vector3
 
