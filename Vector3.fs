@@ -8,6 +8,8 @@ module Vector3 =
     let cross (u: Vector3) (v: Vector3) =
         Vector3(u.Y * v.Z - u.Z * v.Y, u.Z * v.X - u.X * v.Z, u.X * v.Y - u.Y * v.X)
 
+    let unitVector (v: Vector3) = v / v.Length()
+
 [<Struct>]
 type Point3 = Point3 of Vector3
 
