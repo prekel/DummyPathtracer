@@ -7,5 +7,5 @@ type Ray = { Origin: Point3; Direction: Vector3 }
 
 module Ray =
     let at ray (t: float32) =
-        let (Point3 origin) = ray.Origin
-        origin + t * ray.Direction |> Point3
+        (Point3.value ray.Origin) + t * ray.Direction
+        |> Point3

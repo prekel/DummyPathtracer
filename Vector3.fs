@@ -15,10 +15,15 @@ module Vector3 =
 [<Struct>]
 type Point3 = Point3 of Vector3
 
+module Point3 =
+    let value (Point3 point3) = point3
+
 [<Struct>]
 type Color = Color of Vector3
 
 module Color =
+    let value (Color color) = color
+
     let writeColor sw (Color pixelColor) =
         fprintfn
             sw
