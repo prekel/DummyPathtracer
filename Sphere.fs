@@ -3,6 +3,7 @@ namespace DummyPathtracer
 type Sphere =
     { Center: Point3
       Radius: float32 }
+
     interface IHittable with
         member this.Hit ray tMin tMax =
             let oc =
@@ -35,8 +36,8 @@ type Sphere =
 
                     let p = Ray.at ray t
 
-                    let normal =
+                    let outwardNormal =
                         (Point3.value p - Point3.value this.Center)
                         / this.Radius
 
-                    ValueSome({ P = p; Normal = normal; T = t })
+                    ValueSome(HitRecord.createFaceNormal ray outwardNormal p t)
