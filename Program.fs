@@ -35,7 +35,7 @@ let rec rayColor r (world: Hittable) depth =
 let main _ =
     let aspectRatio = 16.f / 9.f
 
-    let imageWidth = 400
+    let imageWidth = 80
     let imageHeight = int (float32 imageWidth / aspectRatio)
     let samplesPerPixel = 100
     let maxDepth = 50
@@ -57,28 +57,45 @@ let main _ =
 
     fprintfn sw $"P3\n%d{imageWidth} %d{imageHeight}\n255"
 
-    for j in [ imageHeight - 1 .. -1 .. 0 ] do
-        printfn $"Scanlines remaining: %d{j}"
+    let qwe =
+        [ imageHeight - 1 .. -1 .. 0 ]
+        |> List.map
+            (fun j ->
+                printfn $"Scanlines remaining: %d{j}"
 
-        for i in [ 0 .. imageWidth - 1 ] do
-            let pixelColor =
-                [ 0 .. samplesPerPixel - 1 ]
-                |> List.map
-                    (fun _ ->
-                        let u =
-                            (float32 i + randomFloat32 ())
-                            / float32 (imageWidth - 1)
+                async {
+                    let y =
+                        [ 0 .. imageWidth - 1 ]
+                        |> List.map
+                            (fun i ->
+                                let pixelColor =
+                                    [ 0 .. samplesPerPixel - 1 ]
+                                    |> List.map
+                                        (fun _ ->
+                                            let u =
+                                                (float32 i + randomFloat32 ())
+                                                / float32 (imageWidth - 1)
 
-                        let v =
-                            (float32 j + randomFloat32 ())
-                            / float32 (imageHeight - 1)
+                                            let v =
+                                                (float32 j + randomFloat32 ())
+                                                / float32 (imageHeight - 1)
 
-                        let r = Camera.getRay u v camera
-                        rayColor r world maxDepth |> Color.value)
-                |> List.sum
-                |> Color
+                                            let r = Camera.getRay u v camera
+                                            rayColor r world maxDepth |> Color.value)
+                                    |> List.sum
+                                    |> Color
 
-            Color.writeColor sw pixelColor samplesPerPixel
+                                Color.toStructIntTuple pixelColor samplesPerPixel)
+
+                    return y
+                })
+
+    let asd =
+        qwe
+        |> Async.Parallel
+        |> Async.RunSynchronously
+        
+        |> Array.iter (List.iter (fun (struct (r, g, b)) -> fprintfn sw $"%d{r} %d{g} %d{b}"))
 
     printfn "Done."
 

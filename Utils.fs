@@ -3,11 +3,15 @@ module DummyPathtracer.Utils
 
 open System
 
-let random = Random()
+let random1 =
+    new System.Threading.ThreadLocal<Random>(fun () -> Random())
+
+let random = random1.Value
+let random2 () = Random()
 
 let degreeToRadians degrees = degrees * MathF.PI / 180.f
 
-let randomFloat32 () = random.NextDouble() |> float32
+let randomFloat32 () = random2().NextDouble() |> float32
 
 let randomFloat32MinMax min max = min + (max - min) * randomFloat32 ()
 

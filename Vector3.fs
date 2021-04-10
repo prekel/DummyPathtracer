@@ -23,8 +23,8 @@ module Vector3 =
             let p = randomMinMax -1f 1f
 
             if p.LengthSquared() >= 1.f then
-                p
-            else
                 recRandom ()
+            else
+                p
 
         recRandom ()
