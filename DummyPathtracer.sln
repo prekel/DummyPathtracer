@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DummyPathtracer", "DummyPathtracer.fsproj", "{3ED9211F-1A4B-40FE-92DA-B8E96B38B39C}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DummyPathtracer.PpmToPng", "DummyPathtracer.PpmToPng\DummyPathtracer.PpmToPng.fsproj", "{52DE538D-00BE-4523-BFBA-8652B4F2EFC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{3ED9211F-1A4B-40FE-92DA-B8E96B38B39C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3ED9211F-1A4B-40FE-92DA-B8E96B38B39C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3ED9211F-1A4B-40FE-92DA-B8E96B38B39C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52DE538D-00BE-4523-BFBA-8652B4F2EFC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52DE538D-00BE-4523-BFBA-8652B4F2EFC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52DE538D-00BE-4523-BFBA-8652B4F2EFC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52DE538D-00BE-4523-BFBA-8652B4F2EFC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
