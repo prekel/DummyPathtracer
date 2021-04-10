@@ -1,11 +1,14 @@
-﻿open DummyPathtracer
+﻿open System.Numerics
+open DummyPathtracer
 
 open System.IO
 
 [<EntryPoint>]
 let main _ =
-    let imageWidth = 256
-    let imageHeight = 256
+    let aspectRatio = 16.f / 9.f
+
+    let imageWidth = 400
+    let imageHeight = int (float32 imageWidth / aspectRatio)
 
     use sw =
         new StreamWriter(Path.Combine(__SOURCE_DIRECTORY__, "image.ppm"))
@@ -17,7 +20,8 @@ let main _ =
 
         for i in [ 0 .. imageWidth - 1 ] do
             let pixelColor =
-                Color(float32 i / float32 (imageWidth - 1), float32 j / float32 (imageHeight - 1), 0.25f)
+                Vector3(float32 i / float32 (imageWidth - 1), float32 j / float32 (imageHeight - 1), 0.25f)
+                |> Color
 
             Color.writeColor sw pixelColor
 

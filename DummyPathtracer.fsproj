@@ -6,8 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Vector3.fs" />
-        <Compile Include="Program.fs" />
+        <Compile Include="Vector3.fs"/>
+        <Compile Include="Ray.fs"/>
+        <Compile Include="Program.fs"/>
     </ItemGroup>
 
 </Project>
