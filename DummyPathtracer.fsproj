@@ -6,8 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Program.fs" />
-        <Content Include=".gitignore" />
+        <Compile Include="Program.fs"/>
     </ItemGroup>
 
 </Project>
