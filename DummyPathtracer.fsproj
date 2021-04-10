@@ -9,9 +9,8 @@
         <Compile Include="Utils.fs" />
         <Compile Include="Vector3.fs" />
         <Compile Include="Ray.fs" />
+        <Compile Include="HitRecord.fs" />
         <Compile Include="Hittable.fs" />
-        <Compile Include="Sphere.fs" />
-        <Compile Include="HittableList.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 

@@ -3,8 +3,8 @@ open System.IO
 
 open DummyPathtracer
 
-let rayColor r (world: IHittable) =
-    match world.Hit r 0.f infinityf with
+let rayColor r (world: Hittable) =
+    match Hittable.hit r 0.f infinityf world with
     | ValueSome rec' -> 0.5f * (rec'.Normal + Vector3.One) |> Color
     | ValueNone ->
         let unitDirection = r.Direction |> Vector3.unitVector
@@ -22,11 +22,14 @@ let main _ =
     let imageHeight = int (float32 imageWidth / aspectRatio)
 
     let world =
-        { HittableList.Objects =
-              [ { Center = Point3(Vector3(0.f, 0.f, -1.f))
-                  Radius = 0.5f }
-                { Center = Point3(Vector3(0f, -100.5f, -1f))
-                  Radius = 100f } ] }
+        Hittable.HittableList
+            { HittableList.Objects =
+                  [ Sphere
+                      { Center = Point3(Vector3(0.f, 0.f, -1.f))
+                        Radius = 0.5f }
+                    Sphere
+                        { Center = Point3(Vector3(0f, -100.5f, -1f))
+                          Radius = 100f } ] }
 
 
     let viewportHeight = 2.f
