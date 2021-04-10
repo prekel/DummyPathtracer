@@ -7,9 +7,9 @@ let random = Random()
 
 let degreeToRadians degrees = degrees * MathF.PI / 180.f
 
-let randomDouble () = random.NextDouble() |> float32
+let randomFloat32 () = random.NextDouble() |> float32
 
-let randomDoubleMinMax min max = min + (max - min) * randomDouble ()
+let randomFloat32MinMax min max = min + (max - min) * randomFloat32 ()
 
 let clamp x min max =
     match x < min, x > max with

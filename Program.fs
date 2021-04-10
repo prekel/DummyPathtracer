@@ -3,16 +3,33 @@ open System.IO
 
 open DummyPathtracer
 
-let rayColor r (world: Hittable) =
-    match Hittable.hit r 0.f infinityf world with
-    | ValueSome rec' -> 0.5f * (rec'.Normal + Vector3.One) |> Color
-    | ValueNone ->
-        let unitDirection = r.Direction |> Vector3.unitVector
-        let t = 0.5f * (unitDirection.Y + 1.f)
+let rec rayColor r (world: Hittable) depth =
+    match depth <= 0 with
+    | true -> Color(Vector3.Zero)
+    | _ ->
+        match Hittable.hit r 0.f infinityf world with
+        | ValueNone ->
+            let unitDirection = r.Direction |> Vector3.unitVector
+            let t = 0.5f * (unitDirection.Y + 1.f)
 
-        (1.f - t) * Vector3.One
-        + t * Vector3(0.5f, 0.7f, 1.f)
-        |> Color
+            (1.f - t) * Vector3.One
+            + t * Vector3(0.5f, 0.7f, 1.f)
+            |> Color
+        | ValueSome rec' ->
+            let target =
+                (Point3.value rec'.P)
+                + rec'.Normal
+                + Vector3.randomInUnitSphere ()
+
+            rayColor
+                { Ray.Origin = rec'.P
+                  Direction = target - (Point3.value rec'.P) }
+                world
+                (depth - 1)
+            |> Color.value
+            |> (*) 0.5f
+            |> Color
+
 
 [<EntryPoint>]
 let main _ =
@@ -21,6 +38,7 @@ let main _ =
     let imageWidth = 400
     let imageHeight = int (float32 imageWidth / aspectRatio)
     let samplesPerPixel = 100
+    let maxDepth = 50
 
     let world =
         Hittable.HittableList
@@ -48,15 +66,15 @@ let main _ =
                 |> List.map
                     (fun _ ->
                         let u =
-                            (float32 i + randomDouble ())
+                            (float32 i + randomFloat32 ())
                             / float32 (imageWidth - 1)
 
                         let v =
-                            (float32 j + randomDouble ())
+                            (float32 j + randomFloat32 ())
                             / float32 (imageHeight - 1)
 
                         let r = Camera.getRay u v camera
-                        rayColor r world |> Color.value)
+                        rayColor r world maxDepth |> Color.value)
                 |> List.sum
                 |> Color
 

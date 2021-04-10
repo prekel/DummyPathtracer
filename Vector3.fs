@@ -11,3 +11,20 @@ module Vector3 =
     let unitVector (v: Vector3) = v / v.Length()
 
     let dot (u: Vector3) (v: Vector3) = u.X * v.X + u.Y * v.Y + u.Z * v.Z
+
+    let random () =
+        Vector3(randomFloat32 (), randomFloat32 (), randomFloat32 ())
+
+    let randomMinMax min max =
+        Vector3(randomFloat32MinMax min max, randomFloat32MinMax min max, randomFloat32MinMax min max)
+
+    let randomInUnitSphere () =
+        let rec recRandom () =
+            let p = randomMinMax -1f 1f
+
+            if p.LengthSquared() >= 1.f then
+                p
+            else
+                recRandom ()
+
+        recRandom ()
