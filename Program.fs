@@ -102,11 +102,11 @@ let main _ =
                   [| Sphere
                       { Center = Point3(Vector3(0.f, 0.f, -1.f))
                         Radius = 0.5f
-                        Material = Material(NotImplementedException()) }
+                        Material = Lambertian(Color(Vector3.Zero)) }
                      Sphere
                          { Center = Point3(Vector3(0f, -100.5f, -1f))
                            Radius = 100f
-                           Material = Material(NotImplementedException()) } |] }
+                           Material = Lambertian(Color(Vector3.Zero)) } |] }
 
     let camera = Camera.create ()
 

@@ -14,7 +14,7 @@ type Point3 = Point3 of Vector3
 type Ray = { Origin: Point3; Direction: Vector3 }
 
 [<Struct>]
-type Material = Material of Undefined
+type Material = Lambertian of albedo: Color
 
 [<Struct>]
 type HitRecord =

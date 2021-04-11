@@ -37,3 +37,7 @@ let randomInHemisphere random normal =
         inUnitSphere
     else
         -inUnitSphere
+
+let nearZero (v: Vector3) =
+    let eps = 1e-8f
+    abs v.X < eps && abs v.Y < eps && abs v.Z < eps
