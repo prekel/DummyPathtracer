@@ -32,3 +32,10 @@ module Vector3 =
                 p
 
         recRandom ()
+
+    let randomInUnitSphere2 random =
+        let p = randomMinMax random -1f 1f
+
+        match p.LengthSquared() >= 1.f with
+        | true -> p / (randomFloat32MinMax random 1.f 2.f)
+        | _ -> p

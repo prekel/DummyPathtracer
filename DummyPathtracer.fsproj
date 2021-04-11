@@ -15,6 +15,7 @@
         <Compile Include="Hittable.fs" />
         <Compile Include="Camera.fs" />
         <Compile Include="Program.fs" />
+        <Content Include="image.png" />
     </ItemGroup>
 
 </Project>

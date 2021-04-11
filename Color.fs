@@ -10,9 +10,9 @@ module Color =
 
     let toStructIntTuple (Color pixelColor) samplesPerPixel =
         let scale = 1.f / (float32 samplesPerPixel)
-        let r = pixelColor.X * scale
-        let g = pixelColor.Y * scale
-        let b = pixelColor.Z * scale
+        let r = sqrt (pixelColor.X * scale)
+        let g = sqrt (pixelColor.Y * scale)
+        let b = sqrt (pixelColor.Z * scale)
 
         let r = int (256.f * clamp r 0.f 0.999f)
         let g = int (256.f * clamp g 0.f 0.999f)

@@ -8,7 +8,7 @@ let rec rayColor r (world: Hittable) depth random =
     match depth <= 0 with
     | true -> Color(Vector3.Zero)
     | _ ->
-        match Hittable.hit r 0.f infinityf world with
+        match Hittable.hit r 0.001f infinityf world with
         | ValueNone ->
             let unitDirection = r.Direction |> Vector3.unitVector
             let t = 0.5f * (unitDirection.Y + 1.f)
@@ -79,7 +79,7 @@ let renderScanlineParams q j =
 let main _ =
     let aspectRatio = 16.f / 9.f
 
-    let imageWidth = 400
+    let imageWidth = 800
     let imageHeight = int (float32 imageWidth / aspectRatio)
     let samplesPerPixel = 100
     let maxDepth = 50
