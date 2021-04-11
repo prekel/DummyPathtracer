@@ -52,7 +52,7 @@ and private hitList ray tMin tMax list =
 
     let ret =
         (init, list.Objects)
-        ||> Array.fold
+        ||> Seq.fold
                 (fun st object ->
                     let hit = hit ray tMin st.ClosestSoFar object
 

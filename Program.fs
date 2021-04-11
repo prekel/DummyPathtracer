@@ -29,7 +29,6 @@ let rayColor r (world: Hittable) depth random =
 
     recRayColor r world depth
 
-[<Struct>]
 type ScanlineRenderParams =
     { Camera: Camera
       ImageWidth: int
@@ -38,18 +37,16 @@ type ScanlineRenderParams =
       MaxDepth: int
       World: Hittable }
 
-let renderScanlineParams q j =
+let renderScanline q j =
     async {
         printfn $"Started: %d{j}"
         let random = Random()
 
         let y =
-            [| 0 .. q.ImageWidth - 1 |]
-            |> Array.map
+            Seq.init q.ImageWidth
                 (fun i ->
                     let pixelColor =
-                        [| 0 .. q.SamplesPerPixel - 1 |]
-                        |> Array.map
+                        Seq.init q.SamplesPerPixel
                             (fun _ ->
                                 let u =
                                     (float32 i + randomFloat32 random)
@@ -63,10 +60,11 @@ let renderScanlineParams q j =
 
                                 rayColor r q.World q.MaxDepth random
                                 |> Color.value)
-                        |> Array.sum
+                        |> Seq.sum
                         |> Color
 
                     Color.toRgb pixelColor q.SamplesPerPixel)
+                |> Seq.toArray
 
         printfn $"Ended: %d{j}"
         return y
@@ -163,7 +161,7 @@ let main _ =
 
     let aspectRatio = 3.f / 2.f
 
-    let imageWidth = 1200
+    let imageWidth = 120
     let imageHeight = int (float32 imageWidth / aspectRatio)
     let samplesPerPixel = 500
     let maxDepth = 50
@@ -189,7 +187,7 @@ let main _ =
 
     let qwe =
         [| imageHeight - 1 .. -1 .. 0 |]
-        |> Array.map (renderScanlineParams q)
+        |> Array.map (renderScanline q)
         |> (fun a ->
             match degreeOfParallelism with
             | Some d -> Async.Parallel(a, d)
