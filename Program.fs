@@ -66,7 +66,7 @@ let renderScanlineParams q j =
                         |> Array.sum
                         |> Color
 
-                    Color.toStructIntTuple pixelColor q.SamplesPerPixel)
+                    Color.toRgb pixelColor q.SamplesPerPixel)
 
         printfn $"Ended: %d{j}"
         return y
@@ -159,11 +159,13 @@ let randomScene () =
 
 [<EntryPoint>]
 let main _ =
+    let degreeOfParallelism = Some(Environment.ProcessorCount - 2)
+
     let aspectRatio = 3.f / 2.f
 
     let imageWidth = 1200
     let imageHeight = int (float32 imageWidth / aspectRatio)
-    let samplesPerPixel = 100 // TODO
+    let samplesPerPixel = 500
     let maxDepth = 50
 
     let world = randomScene ()
@@ -188,7 +190,10 @@ let main _ =
     let qwe =
         [| imageHeight - 1 .. -1 .. 0 |]
         |> Array.map (renderScanlineParams q)
-        |> Async.Parallel
+        |> (fun a ->
+            match degreeOfParallelism with
+            | Some d -> Async.Parallel(a, d)
+            | None -> Async.Parallel a)
         |> Async.RunSynchronously
 
     use sw =
@@ -196,8 +201,7 @@ let main _ =
 
     fprintfn sw $"P3\n%d{imageWidth} %d{imageHeight}\n255"
 
-    qwe
-    |> Array.iter (Array.iter (fun (struct (r, g, b)) -> fprintfn sw $"%d{r} %d{g} %d{b}"))
+    qwe |> Array.iter (Array.iter (Color.writeRgb sw))
 
     printfn "Done."
 

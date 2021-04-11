@@ -1,6 +1,7 @@
 module DummyPathtracer.Vector3
 
 open System.Numerics
+
 open DummyPathtracer
 
 let lengthSquared (v: Vector3) = v.LengthSquared()

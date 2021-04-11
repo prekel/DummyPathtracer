@@ -2,8 +2,6 @@ namespace DummyPathtracer.Types
 
 open System.Numerics
 
-open DummyPathtracer
-
 [<Struct>]
 type Color = Color of Vector3
 
