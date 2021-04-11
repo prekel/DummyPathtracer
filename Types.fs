@@ -16,7 +16,7 @@ type Ray = { Origin: Point3; Direction: Vector3 }
 [<Struct>]
 type Material =
     | Lambertian of albedo: Color
-    | Metal of metalAlbedo:Color
+    | Metal of metalAlbedo: Color * fuzz: float32
 
 [<Struct>]
 type HitRecord =

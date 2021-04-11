@@ -19,13 +19,15 @@ let scatter rIn hitRecord random material =
 
         let attenuation = albedo
         ValueSome(struct (scattered, attenuation))
-    | Metal metalAlbedo ->
+    | Metal (metalAlbedo, fuzz) ->
         let reflected =
             Vector3.reflect (Vector3.unitVector rIn.Direction) hitRecord.Normal
 
         let scattered =
             { Origin = hitRecord.P
-              Direction = reflected }
+              Direction =
+                  reflected
+                  + fuzz * Vector3.randomInUnitSphere random }
 
         let attenuation = metalAlbedo
 

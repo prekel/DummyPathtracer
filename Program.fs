@@ -3,16 +3,9 @@ open System.Numerics
 open System.IO
 
 open DummyPathtracer
-open DummyPathtracer
 open DummyPathtracer.Types
 
-[<Struct>]
-type DiffuseFormulation =
-    | RandomInUnitSphere
-    | RandomUnitVector
-    | RandomInHemisphere
-
-let rayColor r (world: Hittable) depth random diffuse =
+let rayColor r (world: Hittable) depth random =
     let rec recRayColor (r: Ray) world depth =
         match depth <= 0 with
         | true -> Color(Vector3.Zero)
@@ -43,8 +36,7 @@ type ScanlineRenderParams =
       ImageHeight: int
       SamplesPerPixel: int
       MaxDepth: int
-      World: Hittable
-      Diffuse: DiffuseFormulation }
+      World: Hittable }
 
 let renderScanlineParams q j =
     async {
@@ -69,7 +61,7 @@ let renderScanlineParams q j =
 
                                 let r = Camera.getRay u v q.Camera
 
-                                rayColor r q.World q.MaxDepth random q.Diffuse
+                                rayColor r q.World q.MaxDepth random
                                 |> Color.value)
                         |> Array.sum
                         |> Color
@@ -95,8 +87,11 @@ let main _ =
     let materialCenter =
         Lambertian ^ Color(Vector3(0.7f, 0.3f, 0.3f))
 
-    let materialLeft = Metal ^ Color(Vector3(0.8f, 0.8f, 0.8f))
-    let materialRight = Metal ^ Color(Vector3(0.8f, 0.6f, 0.2f))
+    let materialLeft =
+        Metal(Color(Vector3(0.8f, 0.8f, 0.8f)), 0.3f)
+
+    let materialRight =
+        Metal(Color(Vector3(0.8f, 0.6f, 0.2f)), 1.f)
 
     let world =
         Hittable.HittableList
@@ -120,16 +115,13 @@ let main _ =
 
     let camera = Camera.create ()
 
-    let diffuse = RandomUnitVector
-
     let q =
         { Camera = camera
           ImageWidth = imageWidth
           ImageHeight = imageHeight
           SamplesPerPixel = samplesPerPixel
           MaxDepth = maxDepth
-          World = world
-          Diffuse = diffuse }
+          World = world }
 
     let qwe =
         [| imageHeight - 1 .. -1 .. 0 |]
