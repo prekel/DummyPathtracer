@@ -4,6 +4,11 @@ open System.Numerics
 
 open DummyPathtracer.Types
 
+let private reflectance cosine refIdx =
+    let r0 = (1.f - refIdx) / (1.f + refIdx)
+    let r0 = r0 * r0
+    r0 + (1.f - r0) * (1.f - cosine) ** 5.f
+
 let scatter rIn hitRecord random material =
     match material with
     | Lambertian albedo ->
@@ -52,8 +57,9 @@ let scatter rIn hitRecord random material =
 
         let sinTheta = sqrt (1.f - cosTheta * cosTheta)
 
-        let direction = 
-            match refractionRatio * sinTheta > 1.f with
+        let direction =
+            match refractionRatio * sinTheta > 1.f
+                  || reflectance cosTheta refractionRatio > randomFloat32 random with
             | true -> Vector3.reflect unitDirection hitRecord.Normal
             | false -> Vector3.refract unitDirection hitRecord.Normal refractionRatio
 
