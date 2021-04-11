@@ -39,7 +39,7 @@ let rec hit ray tMin tMax hittable =
                     (Point3.value p - Point3.value sphere.Center)
                     / sphere.Radius
 
-                ValueSome(HitRecord.createFaceNormal ray outwardNormal p t)
+                ValueSome(HitRecord.createFaceNormal ray outwardNormal p t sphere.Material)
     | HittableList list ->
         let init =
             struct {| ClosestSoFar = tMax

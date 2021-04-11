@@ -14,7 +14,7 @@ let faceNormal r outwardNormal record =
               else
                   -outwardNormal }
 
-let createFaceNormal r outwardNormal p t =
+let createFaceNormal r outwardNormal p t material =
     let frontFace =
         Vector3.dot r.Direction outwardNormal < 0.f
 
@@ -25,4 +25,5 @@ let createFaceNormal r outwardNormal p t =
           if frontFace then
               outwardNormal
           else
-              -outwardNormal }
+              -outwardNormal
+      Material = material }

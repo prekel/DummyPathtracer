@@ -21,10 +21,14 @@ type HitRecord =
     { P: Point3
       Normal: Vector3
       T: float32
-      FrontFace: bool }
+      FrontFace: bool
+      Material: Material }
 
 [<Struct>]
-type Sphere = { Center: Point3; Radius: float32 }
+type Sphere =
+    { Center: Point3
+      Radius: float32
+      Material: Material }
 
 [<Struct>]
 type Hittable =
@@ -34,7 +38,7 @@ type Hittable =
 and [<Struct>] HittableList = { Objects: Hittable array }
 
 type Camera =
-        { CameraOrigin: Point3
-          LowerLeftCorner: Point3
-          Horizontal: Vector3
-          Vertical: Vector3 }
+    { CameraOrigin: Point3
+      LowerLeftCorner: Point3
+      Horizontal: Vector3
+      Vertical: Vector3 }
