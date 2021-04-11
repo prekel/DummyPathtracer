@@ -1,11 +1,7 @@
-namespace DummyPathtracer
+module DummyPathtracer.Ray
 
-open System.Numerics
+open DummyPathtracer.Types
 
-[<Struct>]
-type Ray = { Origin: Point3; Direction: Vector3 }
-
-module Ray =
-    let at ray (t: float32) =
-        (Point3.value ray.Origin) + t * ray.Direction
-        |> Point3
+let at ray (t: float32) =
+    (Point3.value ray.Origin) + t * ray.Direction
+    |> Point3

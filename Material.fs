@@ -1,9 +1,7 @@
-namespace DummyPathtracer
+module DummyPathtracer.Material
 
-[<Struct>]
-type Material = Material of Undefined
+open DummyPathtracer.Types
 
-module Material =
-    let scatter ray hitRecord material =
-        match material with
-        | Material _ -> failwith ""
+let scatter ray hitRecord material =
+    match material with
+    | Material _ -> failwith ""

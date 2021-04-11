@@ -1,36 +1,28 @@
-namespace DummyPathtracer
+module DummyPathtracer.HitRecord
 
-open System.Numerics
+open DummyPathtracer.Types
 
-[<Struct>]
-type HitRecord =
-    { P: Point3
-      Normal: Vector3
-      T: float32
-      FrontFace: bool }
+let faceNormal r outwardNormal record =
+    let frontFace =
+        Vector3.dot r.Direction outwardNormal < 0.f
 
-module HitRecord =
-    let faceNormal r outwardNormal record =
-        let frontFace =
-            Vector3.dot r.Direction outwardNormal < 0.f
-
-        { record with
-              FrontFace = frontFace
-              Normal =
-                  if frontFace then
-                      outwardNormal
-                  else
-                      -outwardNormal }
-
-    let createFaceNormal r outwardNormal p t =
-        let frontFace =
-            Vector3.dot r.Direction outwardNormal < 0.f
-
-        { P = p
-          T = t
+    { record with
           FrontFace = frontFace
           Normal =
               if frontFace then
                   outwardNormal
               else
                   -outwardNormal }
+
+let createFaceNormal r outwardNormal p t =
+    let frontFace =
+        Vector3.dot r.Direction outwardNormal < 0.f
+
+    { P = p
+      T = t
+      FrontFace = frontFace
+      Normal =
+          if frontFace then
+              outwardNormal
+          else
+              -outwardNormal }

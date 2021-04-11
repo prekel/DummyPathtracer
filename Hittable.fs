@@ -1,72 +1,63 @@
-namespace DummyPathtracer
+module DummyPathtracer.Hittable
 
-[<Struct>]
-type Sphere = { Center: Point3; Radius: float32 }
+open DummyPathtracer.Types
 
-[<Struct>]
-type Hittable =
-    | Sphere of sphere: Sphere
-    | HittableList of list: HittableList
+let rec hit ray tMin tMax hittable =
+    match hittable with
+    | Sphere sphere ->
+        let oc =
+            (Point3.value ray.Origin)
+            - (Point3.value sphere.Center)
 
-and [<Struct>] HittableList = { Objects: Hittable array }
+        let a = ray.Direction.LengthSquared()
+        let halfB = Vector3.dot oc ray.Direction
 
-module Hittable =
-    let rec hit ray tMin tMax hittable =
-        match hittable with
-        | Sphere sphere ->
-            let oc =
-                (Point3.value ray.Origin)
-                - (Point3.value sphere.Center)
+        let c =
+            oc.LengthSquared() - sphere.Radius * sphere.Radius
 
-            let a = ray.Direction.LengthSquared()
-            let halfB = Vector3.dot oc ray.Direction
+        let discriminant = halfB * halfB - a * c
 
-            let c =
-                oc.LengthSquared() - sphere.Radius * sphere.Radius
+        if (discriminant < 0.f) then
+            ValueNone
+        else
+            let sqrtD = sqrt discriminant
 
-            let discriminant = halfB * halfB - a * c
+            let root1 = (-halfB - sqrtD) / a
+            let root2 = (-halfB + sqrtD) / a
 
-            if (discriminant < 0.f) then
-                ValueNone
-            else
-                let sqrtD = sqrt discriminant
+            match root1 < tMin || tMax < root1, root2 < tMin || tMax < root2 with
+            | true, true -> ValueNone
+            | a, b ->
+                let t =
+                    match a, b with
+                    | true, false -> root2
+                    | _ -> root1
 
-                let root1 = (-halfB - sqrtD) / a
-                let root2 = (-halfB + sqrtD) / a
+                let p = Ray.at ray t
 
-                match root1 < tMin || tMax < root1, root2 < tMin || tMax < root2 with
-                | true, true -> ValueNone
-                | a, b ->
-                    let t =
-                        match a, b with
-                        | true, false -> root2
-                        | _ -> root1
+                let outwardNormal =
+                    (Point3.value p - Point3.value sphere.Center)
+                    / sphere.Radius
 
-                    let p = Ray.at ray t
+                ValueSome(HitRecord.createFaceNormal ray outwardNormal p t)
+    | HittableList list ->
+        let init =
+            struct {| ClosestSoFar = tMax
+                      Rec = ValueNone
+                      HitAnything = false |}
 
-                    let outwardNormal =
-                        (Point3.value p - Point3.value sphere.Center)
-                        / sphere.Radius
+        let ret =
+            (init, list.Objects)
+            ||> Array.fold
+                    (fun st object ->
+                        let hit = hit ray tMin st.ClosestSoFar object
 
-                    ValueSome(HitRecord.createFaceNormal ray outwardNormal p t)
-        | HittableList list ->
-            let init =
-                struct {| ClosestSoFar = tMax
-                          Rec = ValueNone
-                          HitAnything = false |}
+                        match hit with
+                        | ValueSome record ->
+                            {| st with
+                                   HitAnything = true
+                                   ClosestSoFar = record.T
+                                   Rec = hit |}
+                        | ValueNone -> st)
 
-            let ret =
-                (init, list.Objects)
-                ||> Array.fold
-                        (fun st object ->
-                            let hit = hit ray tMin st.ClosestSoFar object
-
-                            match hit with
-                            | ValueSome record ->
-                                {| st with
-                                       HitAnything = true
-                                       ClosestSoFar = record.T
-                                       Rec = hit |}
-                            | ValueNone -> st)
-
-            ret.Rec
+        ret.Rec

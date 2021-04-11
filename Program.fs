@@ -3,6 +3,7 @@ open System.Numerics
 open System.IO
 
 open DummyPathtracer
+open DummyPathtracer.Types
 
 [<Struct>]
 type DiffuseFormulation =
@@ -11,7 +12,7 @@ type DiffuseFormulation =
     | RandomInHemisphere
 
 let rayColor r (world: Hittable) depth random diffuse =
-    let rec recRayColor r world depth =
+    let rec recRayColor (r: Ray) world depth =
         match depth <= 0 with
         | true -> Color(Vector3.Zero)
         | _ ->
