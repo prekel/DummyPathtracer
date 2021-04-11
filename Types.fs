@@ -44,4 +44,8 @@ type Camera =
     { CameraOrigin: Point3
       LowerLeftCorner: Point3
       Horizontal: Vector3
-      Vertical: Vector3 }
+      Vertical: Vector3
+      U: Vector3
+      V: Vector3
+      W: Vector3
+      LensRadius: float32 }

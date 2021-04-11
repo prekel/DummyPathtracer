@@ -53,3 +53,17 @@ let refract uv n (etaIOverEtaT: float32) =
         - sqrt(abs (1.f - lengthSquared rOutPErp)) * n
 
     rOutPErp + rOutParallel
+
+let randomInUnitDisk random =
+    let rec recRandomInUnitDisk () =
+        let p =
+            Vector3(randomFloat32MinMax random -1.f 1.f, randomFloat32MinMax random -1.f 1.f, 0.f)
+
+        if p.LengthSquared() >= 1.f then
+            recRandomInUnitDisk ()
+        else
+            p
+
+    recRandomInUnitDisk ()
+
+let length (v: Vector3) = v.Length()

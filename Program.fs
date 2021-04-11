@@ -59,7 +59,7 @@ let renderScanlineParams q j =
                                     (float32 j + randomFloat32 random)
                                     / float32 (q.ImageHeight - 1)
 
-                                let r = Camera.getRay u v q.Camera
+                                let r = Camera.getRay random u v q.Camera
 
                                 rayColor r q.World q.MaxDepth random
                                 |> Color.value)
@@ -76,7 +76,7 @@ let renderScanlineParams q j =
 let main _ =
     let aspectRatio = 16.f / 9.f
 
-    let imageWidth = 800
+    let imageWidth = 400
     let imageHeight = int (float32 imageWidth / aspectRatio)
     let samplesPerPixel = 100
     let maxDepth = 50
@@ -116,13 +116,18 @@ let main _ =
                            Radius = 0.5f
                            Material = materialRight } |] }
 
+    let lookFrom = (Point3(Vector3(3.f, 3.f, 2.f)))
+    let lookAt = (Point3(Vector3(0.f, 0.f, -1.f)))
+    let vUp = (Vector3(0.f, 1.f, 0.f))
+
+    let distToFocus =
+        Point3.value lookFrom - Point3.value lookAt
+        |> Vector3.length
+
+    let aperture = 2.f
+
     let camera =
-        Camera.create
-            (Point3(Vector3(-2f, 2.f, 1.f)))
-            (Point3(Vector3(0.f, 0.f, -1.f)))
-            (Vector3(0.f, 1.f, 0.f))
-            90.f
-            aspectRatio
+        Camera.create lookFrom lookAt vUp 20f aspectRatio aperture distToFocus
 
     let q =
         { Camera = camera
