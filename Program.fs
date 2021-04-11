@@ -20,7 +20,7 @@ let rec rayColor r (world: Hittable) depth random =
             let target =
                 (Point3.value tempRec.P)
                 + tempRec.Normal
-                + Vector3.randomInUnitSphere random
+                + Vector3.randomUnitVector random
 
             rayColor
                 { Ray.Origin = tempRec.P
