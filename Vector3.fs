@@ -1,6 +1,7 @@
 module DummyPathtracer.Vector3
 
 open System.Numerics
+open DummyPathtracer
 
 let lengthSquared (v: Vector3) = v.LengthSquared()
 
@@ -43,3 +44,12 @@ let nearZero (v: Vector3) =
     abs v.X < eps && abs v.Y < eps && abs v.Z < eps
 
 let reflect v n = v - 2.f * (dot v n) * n
+
+let refract uv n (etaIOverEtaT: float32) =
+    let cosTheta = min (dot -uv n) 1.f
+    let rOutPErp = etaIOverEtaT * (uv + cosTheta * n)
+
+    let rOutParallel =
+        - sqrt(abs (1.f - lengthSquared rOutPErp)) * n
+
+    rOutPErp + rOutParallel

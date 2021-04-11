@@ -85,10 +85,10 @@ let main _ =
         Lambertian ^ Color(Vector3(0.8f, 0.8f, 0.f))
 
     let materialCenter =
-        Lambertian ^ Color(Vector3(0.7f, 0.3f, 0.3f))
+        Dielectric 1.5f
 
     let materialLeft =
-        Metal(Color(Vector3(0.8f, 0.8f, 0.8f)), 0.3f)
+        Dielectric 1.5f
 
     let materialRight =
         Metal(Color(Vector3(0.8f, 0.6f, 0.2f)), 1.f)

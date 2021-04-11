@@ -1,5 +1,7 @@
 module DummyPathtracer.Material
 
+open System.Numerics
+
 open DummyPathtracer.Types
 
 let scatter rIn hitRecord random material =
@@ -34,3 +36,12 @@ let scatter rIn hitRecord random material =
         match Vector3.dot scattered.Direction hitRecord.Normal > 0.f with
         | true -> ValueSome(struct (scattered, attenuation))
         | false -> ValueNone
+    | Dielectric indexOfRefraction ->
+        let attenuation = Color(Vector3.One)
+        let refractionRatio = if hitRecord.FrontFace then (1.f / indexOfRefraction) else indexOfRefraction
+        let unitDirection = Vector3.unitVector rIn.Direction
+        let refracted = Vector3.refract unitDirection hitRecord.Normal refractionRatio
+        let scattered = { Origin = hitRecord.P
+                          Direction = refracted }
+        
+        ValueSome (scattered, attenuation)
