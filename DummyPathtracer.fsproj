@@ -14,6 +14,7 @@
         <Compile Include="HitRecord.fs" />
         <Compile Include="Hittable.fs" />
         <Compile Include="Camera.fs" />
+        <Compile Include="Material.fs" />
         <Compile Include="Program.fs" />
         <Content Include="image.png" />
     </ItemGroup>

@@ -3,6 +3,15 @@ module DummyPathtracer.Utils
 
 open System
 
+type Undefined = exn
+
+let inline (^) a b = a b
+
+let inline unimplemented a =
+    match a with
+    | "" -> raise ^ NotImplementedException()
+    | _ -> raise ^ NotImplementedException a
+
 let degreeToRadians degrees = degrees * MathF.PI / 180.f
 
 let randomFloat32 (random: Random) = random.NextDouble() |> float32

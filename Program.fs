@@ -90,7 +90,7 @@ let renderScanlineParams q j =
 let main _ =
     let aspectRatio = 16.f / 9.f
 
-    let imageWidth = 1920
+    let imageWidth = 800
     let imageHeight = int (float32 imageWidth / aspectRatio)
     let samplesPerPixel = 100
     let maxDepth = 50
@@ -107,7 +107,7 @@ let main _ =
 
     let camera = Camera.create ()
 
-    let diffuse = RandomInHemisphere
+    let diffuse = RandomUnitVector
 
     let q =
         { Camera = camera
