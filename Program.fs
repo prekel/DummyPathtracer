@@ -3,6 +3,7 @@ open System.Numerics
 open System.IO
 
 open DummyPathtracer
+open DummyPathtracer
 open DummyPathtracer.Types
 
 [<Struct>]
@@ -25,21 +26,13 @@ let rayColor r (world: Hittable) depth random diffuse =
                 + t * Vector3(0.5f, 0.7f, 1.f)
                 |> Color
             | ValueSome tempRec ->
-                let target =
-                    (Point3.value tempRec.P)
-                    + match diffuse with
-                      | RandomInUnitSphere -> tempRec.Normal + Vector3.randomInUnitSphere random
-                      | RandomUnitVector -> tempRec.Normal + Vector3.randomUnitVector random
-                      | RandomInHemisphere -> Vector3.randomInHemisphere random tempRec.Normal
-
-                recRayColor
-                    { Ray.Origin = tempRec.P
-                      Direction = target - (Point3.value tempRec.P) }
-                    world
-                    (depth - 1)
-                |> Color.value
-                |> (*) 0.5f
-                |> Color
+                match Material.scatter r tempRec random tempRec.Material with
+                | ValueSome (struct (scattered, attenuation)) ->
+                    recRayColor scattered world (depth - 1)
+                    |> Color.value
+                    |> (*) (Color.value attenuation)
+                    |> Color
+                | ValueNone -> Color(Vector3.Zero)
 
     recRayColor r world depth
 
@@ -96,17 +89,34 @@ let main _ =
     let samplesPerPixel = 100
     let maxDepth = 50
 
+    let materialGround =
+        Lambertian ^ Color(Vector3(0.8f, 0.8f, 0.f))
+
+    let materialCenter =
+        Lambertian ^ Color(Vector3(0.7f, 0.3f, 0.3f))
+
+    let materialLeft = Metal ^ Color(Vector3(0.8f, 0.8f, 0.8f))
+    let materialRight = Metal ^ Color(Vector3(0.8f, 0.6f, 0.2f))
+
     let world =
         Hittable.HittableList
             { HittableList.Objects =
                   [| Sphere
-                      { Center = Point3(Vector3(0.f, 0.f, -1.f))
-                        Radius = 0.5f
-                        Material = Lambertian(Color(Vector3.Zero)) }
+                      { Center = Point3(Vector3(0f, -100.5f, -1f))
+                        Radius = 100f
+                        Material = materialGround }
                      Sphere
-                         { Center = Point3(Vector3(0f, -100.5f, -1f))
-                           Radius = 100f
-                           Material = Lambertian(Color(Vector3.Zero)) } |] }
+                         { Center = Point3(Vector3(0.f, 0.f, -1.f))
+                           Radius = 0.5f
+                           Material = materialCenter }
+                     Sphere
+                         { Center = Point3(Vector3(-1.f, 0.f, -1.f))
+                           Radius = 0.5f
+                           Material = materialLeft }
+                     Sphere
+                         { Center = Point3(Vector3(1.f, 0.f, -1.f))
+                           Radius = 0.5f
+                           Material = materialRight } |] }
 
     let camera = Camera.create ()
 

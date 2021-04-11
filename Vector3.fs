@@ -41,3 +41,5 @@ let randomInHemisphere random normal =
 let nearZero (v: Vector3) =
     let eps = 1e-8f
     abs v.X < eps && abs v.Y < eps && abs v.Z < eps
+
+let reflect v n = v - 2.f * (dot v n) * n
