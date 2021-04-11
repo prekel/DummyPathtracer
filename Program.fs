@@ -81,27 +81,48 @@ let main _ =
     let samplesPerPixel = 100
     let maxDepth = 50
 
-    let materialLeft =
-        Lambertian ^ Color(Vector3(0.f, 0.f, 1.f))
+    let materialGround =
+        Lambertian ^ Color(Vector3(0.8f, 0.8f, 0.f))
+
+    let materialCenter =
+        Lambertian ^ Color(Vector3(0.1f, 0.2f, 0.5f))
+
+    let materialLeft = Dielectric 1.5f
 
     let materialRight =
-        Lambertian ^ Color(Vector3(1.f, 0.f, 0.f))
-
-    let R = cos (MathF.PI / 4.f)
+        Metal(Color(Vector3(0.8f, 0.6f, 0.2f)), 0.f)
 
     let world =
         Hittable.HittableList
             { HittableList.Objects =
                   [| Sphere
-                      { Center = Point3(Vector3(-R, 0.f, -1f))
-                        Radius = R
-                        Material = materialLeft }
+                      { Center = Point3(Vector3(0.f, -100.5f, -1f))
+                        Radius = 100.f
+                        Material = materialGround }
                      Sphere
-                         { Center = Point3(Vector3(R, 0.f, -1f))
-                           Radius = R
+                         { Center = Point3(Vector3(0.f, 0.f, -1f))
+                           Radius = 0.5f
+                           Material = materialCenter }
+                     Sphere
+                         { Center = Point3(Vector3(-1.f, 0.f, -1f))
+                           Radius = 0.5f
+                           Material = materialLeft }
+                     Sphere
+                         { Center = Point3(Vector3(-1.f, 0.f, -1f))
+                           Radius = -0.45f
+                           Material = materialLeft }
+                     Sphere
+                         { Center = Point3(Vector3(1.f, 0.f, -1f))
+                           Radius = 0.5f
                            Material = materialRight } |] }
 
-    let camera = Camera.create 90.f aspectRatio
+    let camera =
+        Camera.create
+            (Point3(Vector3(-2f, 2.f, 1.f)))
+            (Point3(Vector3(0.f, 0.f, -1.f)))
+            (Vector3(0.f, 1.f, 0.f))
+            90.f
+            aspectRatio
 
     let q =
         { Camera = camera

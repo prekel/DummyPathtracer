@@ -5,33 +5,37 @@ open System.Numerics
 open DummyPathtracer
 open DummyPathtracer.Types
 
-let create vFov aspectRatio =
+let create lookFrom lookAt vUp vFov aspectRatio =
     let theta = degreeToRadians vFov
     let h = tan (theta / 2.f)
     let viewPortHeight = 2.f * h
     let viewportWidth = aspectRatio * viewPortHeight
-    
-    let focalLength = 1.f
 
-    let origin = Vector3.Zero
-    let horizontal = Vector3(viewportWidth, 0.f, 0.f)
-    let vertical = Vector3(0.f, viewPortHeight, 0.f)
+    let w =
+        Vector3.unitVector (Point3.value lookFrom - Point3.value lookAt)
+
+    let u = Vector3.unitVector (Vector3.cross vUp w)
+    let v = Vector3.cross w u
+
+    let origin = lookFrom
+    let horizontal = viewportWidth * u
+    let vertical = viewPortHeight * v
 
     let lowerLeftCorner =
-        origin
+        Point3.value origin
         - horizontal / 2.f
         - vertical / 2.f
-        - Vector3(0.f, 0.f, focalLength)
+        - w
 
-    { CameraOrigin = Point3 origin
+    { CameraOrigin = origin
       LowerLeftCorner = Point3 lowerLeftCorner
       Horizontal = horizontal
       Vertical = vertical }
 
-let getRay (u: float32) (v: float32) camera =
+let getRay (s: float32) (t: float32) camera =
     { Ray.Origin = camera.CameraOrigin
       Direction =
           (Point3.value camera.LowerLeftCorner)
-          + u * camera.Horizontal
-          + v * camera.Vertical
+          + s * camera.Horizontal
+          + t * camera.Vertical
           - (Point3.value camera.CameraOrigin) }
