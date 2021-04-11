@@ -8,7 +8,7 @@ type Hittable =
     | Sphere of sphere: Sphere
     | HittableList of list: HittableList
 
-and [<Struct>] HittableList = { Objects: Hittable list }
+and [<Struct>] HittableList = { Objects: Hittable array }
 
 module Hittable =
     let rec hit ray tMin tMax hittable =
@@ -29,10 +29,10 @@ module Hittable =
             if (discriminant < 0.f) then
                 ValueNone
             else
-                let sqrtd = sqrt discriminant
+                let sqrtD = sqrt discriminant
 
-                let root1 = (-halfB - sqrtd) / a
-                let root2 = (-halfB + sqrtd) / a
+                let root1 = (-halfB - sqrtD) / a
+                let root2 = (-halfB + sqrtD) / a
 
                 match root1 < tMin || tMax < root1, root2 < tMin || tMax < root2 with
                 | true, true -> ValueNone
@@ -51,13 +51,13 @@ module Hittable =
                     ValueSome(HitRecord.createFaceNormal ray outwardNormal p t)
         | HittableList list ->
             let init =
-                {| ClosestSoFar = tMax
-                   Rec = ValueNone
-                   HitAnything = false |}
+                struct {| ClosestSoFar = tMax
+                          Rec = ValueNone
+                          HitAnything = false |}
 
             let ret =
                 (init, list.Objects)
-                ||> List.fold
+                ||> Array.fold
                         (fun st object ->
                             let hit = hit ray tMin st.ClosestSoFar object
 
