@@ -157,11 +157,11 @@ let randomScene () =
 
 [<EntryPoint>]
 let main _ =
-    let degreeOfParallelism = Some(Environment.ProcessorCount - 2)
+    let degreeOfParallelism = Some(Environment.ProcessorCount - 1)
 
     let aspectRatio = 3.f / 2.f
 
-    let imageWidth = 120
+    let imageWidth = 1200
     let imageHeight = int (float32 imageWidth / aspectRatio)
     let samplesPerPixel = 500
     let maxDepth = 50
