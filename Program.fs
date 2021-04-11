@@ -72,59 +72,107 @@ let renderScanlineParams q j =
         return y
     }
 
+let randomScene () =
+    let random = Random()
+
+    let groundMaterial =
+        Lambertian ^ Color(Vector3(0.5f, 0.5f, 0.5f))
+
+    let ground =
+        Sphere
+            { Center = Point3(Vector3(0.f, -1000.f, 0.f))
+              Radius = 1000.f
+              Material = groundMaterial }
+
+    let genSphere a b =
+        let a = float32 a
+        let b = float32 b
+
+        let chooseMat = randomFloat32 random
+
+        let center =
+            Point3(Vector3(a + 0.9f * randomFloat32 random, 0.2f, b + 0.9f * randomFloat32 random))
+
+        if (Point3.value center - Vector3(4.f, 0.2f, 0.f))
+           |> Vector3.length > 0.9f then
+
+            let sphereMaterial =
+                match chooseMat with
+                | choose when choose < 0.8f ->
+                    let albedo =
+                        Color(Vector3.random random * Vector3.random random)
+
+                    Lambertian albedo
+                | choose when choose < 0.95f ->
+                    let albedo =
+                        Color(Vector3.randomMinMax random 0.5f 1f)
+
+                    let fuzz = randomFloat32MinMax random 0.f 0.5f
+                    Metal(albedo, fuzz)
+                | _ -> Dielectric 1.5f
+
+            Sphere
+                { Center = center
+                  Radius = 0.2f
+                  Material = sphereMaterial }
+            |> ValueSome
+        else
+            ValueNone
+
+    let spheres =
+        Array.allPairs [| -11 .. 11 - 1 |] [| -11 .. 11 - 1 |]
+        |> Array.map (fun (a, b) -> genSphere a b)
+        |> Array.filter ValueOption.isSome
+        |> Array.map ValueOption.get
+
+    let material1 = Dielectric 1.5f
+
+    let sphere1 =
+        Sphere
+            { Center = Point3(Vector3(0.f, 1.f, 0.f))
+              Radius = 1.f
+              Material = material1 }
+
+    let material2 =
+        Lambertian ^ Color(Vector3(0.4f, 0.2f, 0.1f))
+
+    let sphere2 =
+        Sphere
+            { Center = Point3(Vector3(-4.f, 1.f, 0.f))
+              Radius = 1.f
+              Material = material2 }
+
+    let material3 =
+        Metal(Color(Vector3(0.7f, 0.6f, 0.5f)), 0.f)
+
+    let sphere3 =
+        Sphere
+            { Center = Point3(Vector3(4.f, 1.f, 0.f))
+              Radius = 1.f
+              Material = material3 }
+
+    Hittable.HittableList
+        { HittableList.Objects =
+              [| ground; sphere1; sphere2; sphere3 |]
+              |> Array.append spheres }
+
+
 [<EntryPoint>]
 let main _ =
-    let aspectRatio = 16.f / 9.f
+    let aspectRatio = 3.f / 2.f
 
-    let imageWidth = 400
+    let imageWidth = 1200
     let imageHeight = int (float32 imageWidth / aspectRatio)
-    let samplesPerPixel = 100
+    let samplesPerPixel = 100 // TODO
     let maxDepth = 50
 
-    let materialGround =
-        Lambertian ^ Color(Vector3(0.8f, 0.8f, 0.f))
+    let world = randomScene ()
 
-    let materialCenter =
-        Lambertian ^ Color(Vector3(0.1f, 0.2f, 0.5f))
-
-    let materialLeft = Dielectric 1.5f
-
-    let materialRight =
-        Metal(Color(Vector3(0.8f, 0.6f, 0.2f)), 0.f)
-
-    let world =
-        Hittable.HittableList
-            { HittableList.Objects =
-                  [| Sphere
-                      { Center = Point3(Vector3(0.f, -100.5f, -1f))
-                        Radius = 100.f
-                        Material = materialGround }
-                     Sphere
-                         { Center = Point3(Vector3(0.f, 0.f, -1f))
-                           Radius = 0.5f
-                           Material = materialCenter }
-                     Sphere
-                         { Center = Point3(Vector3(-1.f, 0.f, -1f))
-                           Radius = 0.5f
-                           Material = materialLeft }
-                     Sphere
-                         { Center = Point3(Vector3(-1.f, 0.f, -1f))
-                           Radius = -0.45f
-                           Material = materialLeft }
-                     Sphere
-                         { Center = Point3(Vector3(1.f, 0.f, -1f))
-                           Radius = 0.5f
-                           Material = materialRight } |] }
-
-    let lookFrom = (Point3(Vector3(3.f, 3.f, 2.f)))
-    let lookAt = (Point3(Vector3(0.f, 0.f, -1.f)))
-    let vUp = (Vector3(0.f, 1.f, 0.f))
-
-    let distToFocus =
-        Point3.value lookFrom - Point3.value lookAt
-        |> Vector3.length
-
-    let aperture = 2.f
+    let lookFrom = Point3(Vector3(13.f, 2.f, 3.f))
+    let lookAt = Point3(Vector3(0.f, 0.f, 0.f))
+    let vUp = Vector3(0.f, 1.f, 0.f)
+    let distToFocus = 10.f
+    let aperture = 0.1f
 
     let camera =
         Camera.create lookFrom lookAt vUp 20f aspectRatio aperture distToFocus
