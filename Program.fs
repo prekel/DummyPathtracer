@@ -81,42 +81,27 @@ let main _ =
     let samplesPerPixel = 100
     let maxDepth = 50
 
-    let materialGround =
-        Lambertian ^ Color(Vector3(0.8f, 0.8f, 0.f))
-
-    let materialCenter =
-        Lambertian ^ Color(Vector3(0.1f, 0.2f, 0.5f))
-
-    let materialLeft = Dielectric 1.5f
+    let materialLeft =
+        Lambertian ^ Color(Vector3(0.f, 0.f, 1.f))
 
     let materialRight =
-        Metal(Color(Vector3(0.8f, 0.6f, 0.2f)), 0.f)
+        Lambertian ^ Color(Vector3(1.f, 0.f, 0.f))
+
+    let R = cos (MathF.PI / 4.f)
 
     let world =
         Hittable.HittableList
             { HittableList.Objects =
                   [| Sphere
-                      { Center = Point3(Vector3(0f, -100.5f, -1f))
-                        Radius = 100f
-                        Material = materialGround }
+                      { Center = Point3(Vector3(-R, 0.f, -1f))
+                        Radius = R
+                        Material = materialLeft }
                      Sphere
-                         { Center = Point3(Vector3(0.f, 0.f, -1.f))
-                           Radius = 0.5f
-                           Material = materialCenter }
-                     Sphere
-                         { Center = Point3(Vector3(-1.f, 0.f, -1.f))
-                           Radius = 0.5f
-                           Material = materialLeft }
-                     Sphere
-                         { Center = Point3(Vector3(-1.f, 0.f, -1.f))
-                           Radius = -0.4f
-                           Material = materialLeft }
-                     Sphere
-                         { Center = Point3(Vector3(1.f, 0.f, -1.f))
-                           Radius = 0.5f
+                         { Center = Point3(Vector3(R, 0.f, -1f))
+                           Radius = R
                            Material = materialRight } |] }
 
-    let camera = Camera.create ()
+    let camera = Camera.create 90.f aspectRatio
 
     let q =
         { Camera = camera

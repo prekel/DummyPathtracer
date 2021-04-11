@@ -5,10 +5,12 @@ open System.Numerics
 open DummyPathtracer
 open DummyPathtracer.Types
 
-let create () =
-    let aspectRatio = 16.f / 9.f
-    let viewPortHeight = 2.f
+let create vFov aspectRatio =
+    let theta = degreeToRadians vFov
+    let h = tan (theta / 2.f)
+    let viewPortHeight = 2.f * h
     let viewportWidth = aspectRatio * viewPortHeight
+    
     let focalLength = 1.f
 
     let origin = Vector3.Zero
