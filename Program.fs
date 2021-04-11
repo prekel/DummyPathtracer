@@ -85,13 +85,12 @@ let main _ =
         Lambertian ^ Color(Vector3(0.8f, 0.8f, 0.f))
 
     let materialCenter =
-        Dielectric 1.5f
+        Lambertian ^ Color(Vector3(0.1f, 0.2f, 0.5f))
 
-    let materialLeft =
-        Dielectric 1.5f
+    let materialLeft = Dielectric 1.5f
 
     let materialRight =
-        Metal(Color(Vector3(0.8f, 0.6f, 0.2f)), 1.f)
+        Metal(Color(Vector3(0.8f, 0.6f, 0.2f)), 0.f)
 
     let world =
         Hittable.HittableList
