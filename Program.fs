@@ -108,6 +108,10 @@ let main _ =
                            Radius = 0.5f
                            Material = materialLeft }
                      Sphere
+                         { Center = Point3(Vector3(-1.f, 0.f, -1.f))
+                           Radius = -0.4f
+                           Material = materialLeft }
+                     Sphere
                          { Center = Point3(Vector3(1.f, 0.f, -1.f))
                            Radius = 0.5f
                            Material = materialRight } |] }
