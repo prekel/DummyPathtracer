@@ -34,3 +34,11 @@ module Vector3 =
         recRandom ()
 
     let randomUnitVector random = randomInUnitSphere random |> unitVector
+
+    let randomInHemisphere random normal =
+        let inUnitSphere = randomInUnitSphere random
+
+        if dot inUnitSphere normal > 0.f then
+            inUnitSphere
+        else
+            -inUnitSphere

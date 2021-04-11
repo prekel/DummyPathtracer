@@ -4,33 +4,43 @@ open System.IO
 
 open DummyPathtracer
 
-let rec rayColor r (world: Hittable) depth random =
-    match depth <= 0 with
-    | true -> Color(Vector3.Zero)
-    | _ ->
-        match Hittable.hit r 0.001f infinityf world with
-        | ValueNone ->
-            let unitDirection = r.Direction |> Vector3.unitVector
-            let t = 0.5f * (unitDirection.Y + 1.f)
+[<Struct>]
+type DiffuseFormulation =
+    | RandomInUnitSphere
+    | RandomUnitVector
+    | RandomInHemisphere
 
-            (1.f - t) * Vector3.One
-            + t * Vector3(0.5f, 0.7f, 1.f)
-            |> Color
-        | ValueSome tempRec ->
-            let target =
-                (Point3.value tempRec.P)
-                + tempRec.Normal
-                + Vector3.randomUnitVector random
+let rayColor r (world: Hittable) depth random diffuse =
+    let rec recRayColor r world depth =
+        match depth <= 0 with
+        | true -> Color(Vector3.Zero)
+        | _ ->
+            match Hittable.hit r 0.001f infinityf world with
+            | ValueNone ->
+                let unitDirection = r.Direction |> Vector3.unitVector
+                let t = 0.5f * (unitDirection.Y + 1.f)
 
-            rayColor
-                { Ray.Origin = tempRec.P
-                  Direction = target - (Point3.value tempRec.P) }
-                world
-                (depth - 1)
-                random
-            |> Color.value
-            |> (*) 0.5f
-            |> Color
+                (1.f - t) * Vector3.One
+                + t * Vector3(0.5f, 0.7f, 1.f)
+                |> Color
+            | ValueSome tempRec ->
+                let target =
+                    (Point3.value tempRec.P)
+                    + match diffuse with
+                      | RandomInUnitSphere -> tempRec.Normal + Vector3.randomInUnitSphere random
+                      | RandomUnitVector -> tempRec.Normal + Vector3.randomUnitVector random
+                      | RandomInHemisphere -> Vector3.randomInHemisphere random tempRec.Normal
+
+                recRayColor
+                    { Ray.Origin = tempRec.P
+                      Direction = target - (Point3.value tempRec.P) }
+                    world
+                    (depth - 1)
+                |> Color.value
+                |> (*) 0.5f
+                |> Color
+
+    recRayColor r world depth
 
 [<Struct>]
 type ScanlineRenderParams =
@@ -39,7 +49,8 @@ type ScanlineRenderParams =
       ImageHeight: int
       SamplesPerPixel: int
       MaxDepth: int
-      World: Hittable }
+      World: Hittable
+      Diffuse: DiffuseFormulation }
 
 let renderScanlineParams q j =
     async {
@@ -64,7 +75,7 @@ let renderScanlineParams q j =
 
                                 let r = Camera.getRay u v q.Camera
 
-                                rayColor r q.World q.MaxDepth random
+                                rayColor r q.World q.MaxDepth random q.Diffuse
                                 |> Color.value)
                         |> Array.sum
                         |> Color
@@ -79,7 +90,7 @@ let renderScanlineParams q j =
 let main _ =
     let aspectRatio = 16.f / 9.f
 
-    let imageWidth = 800
+    let imageWidth = 1920
     let imageHeight = int (float32 imageWidth / aspectRatio)
     let samplesPerPixel = 100
     let maxDepth = 50
@@ -96,14 +107,16 @@ let main _ =
 
     let camera = Camera.create ()
 
+    let diffuse = RandomInHemisphere
+
     let q =
         { Camera = camera
           ImageWidth = imageWidth
           ImageHeight = imageHeight
           SamplesPerPixel = samplesPerPixel
           MaxDepth = maxDepth
-          World = world }
-
+          World = world
+          Diffuse = diffuse }
 
     let qwe =
         [| imageHeight - 1 .. -1 .. 0 |]
